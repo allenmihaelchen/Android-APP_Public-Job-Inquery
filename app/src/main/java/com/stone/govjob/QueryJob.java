@@ -1,38 +1,21 @@
 package com.stone.govjob;
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
-
-import com.stone.myclass.DataHandler;
-import com.stone.myclass.Job;
-import com.stone.myclass.JobDAO;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 
-public class MainActivity extends ActionBarActivity
+public class QueryJob extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -40,9 +23,6 @@ public class MainActivity extends ActionBarActivity
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    ArrayList<Job> xmljobs,dbjobs;
-    int annoDate;
-    private JobDAO jobDAO;
     /**
      *
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -53,8 +33,6 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // 建立資料庫物件
-        jobDAO = new JobDAO(getApplicationContext());
 
         Log.i("Stone", "onCreate");
 
@@ -193,57 +171,11 @@ public class MainActivity extends ActionBarActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
+            ((QueryJob) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
 
 
     }
 
-
-    //Allen Loading畫面
-    public void Loading() {
-        //檢查
-
-        //XML轉成SqliLite
-        //轉XMLmethod
-        parseXML();
-
-        //
-
-    }
-
-    public void parseXML(){
-        SAXParserFactory spf = SAXParserFactory.newInstance();
-
-        try {
-            SAXParser sp = spf.newSAXParser();
-            XMLReader xr = sp.getXMLReader();
-
-            DataHandler dataHandler = new DataHandler();
-            xr.setContentHandler(dataHandler);
-            InputStream is =this.getAssets().open("data.xml");
-            xr.parse(new InputSource(is));
-
-
-            xmljobs = dataHandler.getJobs();
-            annoDate = dataHandler.getAnnounceDate();
-
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for(int i=0;i<xmljobs.size();i++){
-            Job xmlgetjob = xmljobs.get(i);
-            jobDAO.insert(xmlgetjob); //塞入資料庫
-        }
-
-    }
 }
